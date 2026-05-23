@@ -207,3 +207,45 @@ dig +short qwerty-test-xyz.thomaspeng.ca A
 ### Same pattern as rouxagency.com
 
 You already run this on `*.rouxagency.com` (`northwave.rouxagency.com`, `sigil.rouxagency.com`, anything else all resolve to `191.101.15.15`). Same operational pattern, second domain.
+
+---
+
+## Deployment record (2026-05-23)
+
+Sigil v0.1 went live at **https://sigil.thomaspeng.ca**. Configuration applied:
+
+```
+Tenant:         personal (per docs/vps/CONVENTIONS.md)
+Code root:      /srv/personal/sigil → /home/tpeng/sigil (symlink)
+Public web:     /srv/personal/sigil/landing  (served directly by Caddy)
+Caddy block:    /etc/caddy/sites/personal/sigil.caddy
+TLS:            Let's Encrypt auto-provisioned via HTTP-01
+DNS:            wildcard *.thomaspeng.ca → 191.101.15.15 (GoDaddy)
+```
+
+### One non-obvious step: ACL for Caddy to read landing
+
+`/home/tpeng` is mode 750 (intentional — keeps other users out). The `caddy` user couldn't traverse into the landing dir even via the `/srv/personal/sigil` symlink. Fix:
+
+```bash
+sudo setfacl -m u:caddy:x /home/tpeng
+sudo setfacl -m u:caddy:x /home/tpeng/sigil
+sudo setfacl -R -m u:caddy:rX /home/tpeng/sigil/landing
+```
+
+This grants caddy `x` (traversal) on parents and `rX` (read + execute-on-dirs) on the landing tree. No exposure of anything else in `/home/tpeng`.
+
+**For future static-tenant deploys:** either repeat the setfacl pattern, OR put public files in `/srv/<tenant>/<app>-www/` owned by the tenant user with `caddy` group read. Document the choice in CONVENTIONS.md when it comes up a second time.
+
+### Verified end-to-end on go-live
+
+- `curl https://sigil.thomaspeng.ca/` → 200, hero "A sigil summons a behavior."
+- `curl https://sigil.thomaspeng.ca/thanks.html` → 200
+- `curl https://sigil.thomaspeng.ca/downloads/sigil-premium-pack-v0.1.0.tar.gz` → 200, 8754 bytes, application/gzip
+- `npx -y github:7P3ng/sigil` in clean dir → installs, runs, writes 4 free commands, previews premium
+- After `tar xzf` into `~/.sigil/templates/` → re-run renders 7 commands (4 free + 3 universal premium marked correctly)
+- Cache headers: HTML `no-cache, must-revalidate`; tarball/assets `max-age=31536000, immutable`
+
+### Remaining gate to first $
+
+Only one thing left in the funnel: the **Buy** button on the landing page points at `STRIPE_PAYMENT_LINK_TBD`. Create the Payment Link in your Stripe account (new sub-account under your Org), success URL `https://sigil.thomaspeng.ca/thanks.html?session={CHECKOUT_SESSION_ID}`, then edit `landing/index.html`, replace the placeholder, commit, and `git pull` on the VPS — no rsync needed since the landing dir is the live symlink target.
