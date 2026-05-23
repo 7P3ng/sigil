@@ -173,17 +173,37 @@ Re-evaluate when any one of these is true:
 
 Until then, every new product just slots into the existing `*.thomaspeng.ca` portfolio. No more domain decisions to make.
 
-## 5c. DNS prerequisite (do this before §2 deploy)
+## 5c. DNS — wildcard, one-time setup
 
-`thomaspeng.ca` resolves to AWS (`15.197.148.33` / `3.33.130.190`) — NOT the Hostinger VPS. The root site is hosted separately. That's fine; the convention from memory (`reference_vps_deploy_pattern.md`) is that **subdomains** of `thomaspeng.ca` go to the VPS.
-
-So before §2 Caddy deploy, you need to add a DNS A record in GoDaddy:
+`thomaspeng.ca` doesn't have a wildcard record yet (verified via dig — only `www` on AWS and `staging` already on the VPS at `191.101.15.15`). Add a wildcard A record so you never touch DNS for a new product again:
 
 ```
-Name:  sigil
+GoDaddy → DNS → Add Record
+Name:  *
 Type:  A
-Value: <VPS public IP — same one used by other *.thomaspeng.ca subdomains>
+Value: 191.101.15.15
 TTL:   1 hour
 ```
 
-Verify with `dig +short sigil.thomaspeng.ca A` from your laptop — should return the VPS IP within ~10 min. Then proceed with §2.
+That single record sends every `*.thomaspeng.ca` to the VPS. Specific records take precedence — `www.thomaspeng.ca` (AWS) still works, MX/SPF for email unaffected.
+
+**For every future product**, just add a Caddy block; no GoDaddy round-trip. That's the win.
+
+### Verify (~5 min)
+
+```bash
+dig +short sigil.thomaspeng.ca A
+# → 191.101.15.15
+
+dig +short qwerty-test-xyz.thomaspeng.ca A
+# → 191.101.15.15 (proves wildcard is live)
+```
+
+### Catch-all behavior to be aware of
+
+- Any random subdomain now reaches the VPS. Caddy returns 404 for hosts without a matching block — that's correct behavior. Just don't run anything on the VPS that auto-binds to "any host."
+- A typo in a future Caddy block (e.g. `sigl.thomaspeng.ca` instead of `sigil`) won't fail loudly — it'll just 404. Double-check Host headers when you add new products.
+
+### Same pattern as rouxagency.com
+
+You already run this on `*.rouxagency.com` (`northwave.rouxagency.com`, `sigil.rouxagency.com`, anything else all resolve to `191.101.15.15`). Same operational pattern, second domain.
