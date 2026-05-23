@@ -113,7 +113,7 @@ No LLM at runtime. Deterministic, fast (<100ms), no API key needed.
 
 ## Roadmap
 
-- [ ] npm publish (currently install via `npx github:thomaspeng/sigil`)
+- [ ] npm publish (currently install via `npx github:7P3ng/sigil`)
 - [ ] More stacks: SvelteKit, Astro, Rails, Phoenix
 - [ ] Per-team template overrides (extend the built-in templates without forking)
 - [ ] CI hook — run on every PR, comment if commands are stale
