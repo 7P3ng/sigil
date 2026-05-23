@@ -1,11 +1,11 @@
-# cc-commands
+# Sigil
 
-**Generate Claude Code slash commands tailored to your repo.**
+**A sigil summons a behavior.** Sigil writes Claude Code slash commands tailored to your repo.
 
 Run once. Get a `.claude/commands/` directory full of slash commands that match your actual stack — your test runner, your framework, your package manager, your conventions. No more copy-pasting other people's commands and editing them by hand.
 
 ```
-$ npx cc-commands
+$ npx sigil
 
 Detected stack:
   pkgmgr      pnpm
@@ -43,19 +43,19 @@ Claude Code lets you write custom slash commands as markdown files in `.claude/c
 - How to phrase them so Claude actually does the right thing
 - How to reference your stack's specifics (your test command, your migration tool, your framework conventions)
 
-`cc-commands` scans your repo and writes commands that are **stack-aware** — the `/commit` for a pnpm + vitest repo runs `pnpm test`, the `/commit` for a poetry + pytest repo runs `pytest`. Same for `/add-route` (Next.js App Router vs Pages), `/add-model` (Django vs Prisma vs Drizzle), etc.
+`sigil` scans your repo and writes commands that are **stack-aware** — the `/commit` for a pnpm + vitest repo runs `pnpm test`, the `/commit` for a poetry + pytest repo runs `pytest`. Same for `/add-route` (Next.js App Router vs Pages), `/add-model` (Django vs Prisma vs Drizzle), etc.
 
 ## Install & run
 
 ```bash
 # Run once in your repo, no install needed
-npx cc-commands
+npx sigil
 
 # Or scan a specific dir
-npx cc-commands --dir path/to/repo
+npx sigil --dir path/to/repo
 
 # Preview without writing
-npx cc-commands --dry-run
+npx sigil --dry-run
 ```
 
 The CLI writes to `.claude/commands/` in the target directory. Open that repo in Claude Code and your commands show up as `/<name>`.
@@ -93,14 +93,14 @@ These take repo conventions into account just like the free tier, but each goes 
 You'll get a zip via email. Drop it in:
 
 ```bash
-~/.cc-commands/templates/
+~/.sigil/templates/
 ```
 
-Re-run `npx cc-commands` — premium templates now render automatically. No license key, no env var. The CLI just sees they're there.
+Re-run `npx sigil` — premium templates now render automatically. No license key, no env var. The CLI just sees they're there.
 
 ### Buy
 
-→ **[cc-commands.thomaspeng.ca](https://cc-commands.thomaspeng.ca)**
+→ **[sigil.thomaspeng.ca](https://sigil.thomaspeng.ca)**
 
 ## How it works
 
@@ -113,7 +113,7 @@ No LLM at runtime. Deterministic, fast (<100ms), no API key needed.
 
 ## Roadmap
 
-- [ ] npm publish (currently install via `npx github:thomaspeng/cc-commands`)
+- [ ] npm publish (currently install via `npx github:thomaspeng/sigil`)
 - [ ] More stacks: SvelteKit, Astro, Rails, Phoenix
 - [ ] Per-team template overrides (extend the built-in templates without forking)
 - [ ] CI hook — run on every PR, comment if commands are stale

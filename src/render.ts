@@ -47,7 +47,7 @@ export function applicableCatalog(
 /**
  * Locations to scan for template files.
  *   - Built-in templates live next to the compiled CLI (dist/templates/).
- *   - Premium templates live in $CC_COMMANDS_DIR or ~/.cc-commands/templates/.
+ *   - Premium templates live in $SIGIL_DIR or ~/.sigil/templates/.
  */
 export function templateRoots(): { builtin: string; premium: string } {
   // dist/cli.js sits next to dist/templates/ at runtime.
@@ -55,9 +55,9 @@ export function templateRoots(): { builtin: string; premium: string } {
   const here = dirname(fileURLToPath(import.meta.url));
   const builtin = join(here, "templates");
 
-  const premium = process.env.CC_COMMANDS_DIR
-    ? resolve(process.env.CC_COMMANDS_DIR, "templates")
-    : join(homedir(), ".cc-commands", "templates");
+  const premium = process.env.SIGIL_DIR
+    ? resolve(process.env.SIGIL_DIR, "templates")
+    : join(homedir(), ".sigil", "templates");
 
   return { builtin, premium };
 }

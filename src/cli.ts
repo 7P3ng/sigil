@@ -14,8 +14,8 @@ import {
 import type { StackProfile } from "./types.js";
 import type { CatalogEntry } from "./render.js";
 
-const PREMIUM_HINT = `Premium templates: paste the template pack into ${kleur.cyan("~/.cc-commands/templates/")} after purchase.`;
-const BUY_URL = process.env.CC_COMMANDS_BUY_URL ?? "https://cc-commands.thomaspeng.ca";
+const PREMIUM_HINT = `Premium templates: paste the template pack into ${kleur.cyan("~/.sigil/templates/")} after purchase.`;
+const BUY_URL = process.env.SIGIL_BUY_URL ?? "https://sigil.thomaspeng.ca";
 
 interface CliArgs {
   dir?: string;
@@ -38,7 +38,7 @@ function main(): void {
     return;
   }
   if (argv.version) {
-    console.log("cc-commands 0.1.0");
+    console.log("sigil 0.1.0");
     return;
   }
 
@@ -93,10 +93,10 @@ function main(): void {
 }
 
 function printHelp(): void {
-  console.log(`${kleur.bold("cc-commands")} — generate Claude Code slash commands tailored to your repo
+  console.log(`${kleur.bold("sigil")} — Claude Code slash commands tailored to your repo
 
 ${kleur.bold("Usage:")}
-  npx cc-commands [options]
+  npx sigil [options]
 
 ${kleur.bold("Options:")}
   -d, --dir <path>     Repo root to scan (default: current directory)
@@ -107,7 +107,7 @@ ${kleur.bold("Options:")}
 
 ${kleur.bold("Where templates come from:")}
   Built-in (free):     bundled with the CLI
-  Premium (paid):      ${join(homedir(), ".cc-commands", "templates")}
+  Premium (paid):      ${join(homedir(), ".sigil", "templates")}
 
 ${kleur.bold("Buy the premium pack:")}
   ${kleur.cyan(BUY_URL)}

@@ -1,10 +1,10 @@
 {
-  "name": "cc-commands",
+  "name": "sigil",
   "version": "0.1.0",
   "description": "Generate custom Claude Code slash commands tailored to your repo's stack.",
   "type": "module",
   "bin": {
-    "cc-commands": "./dist/cli.js"
+    "sigil": "./dist/cli.js"
   },
   "files": [
     "dist",
