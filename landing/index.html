@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>cc-commands — Stack-aware Claude Code slash commands</title>
+<meta name="description" content="Generate custom Claude Code slash commands tailored to your repo. One CLI run. Detects your stack and writes commands that match.">
+<meta property="og:title" content="cc-commands">
+<meta property="og:description" content="Generate Claude Code slash commands tailored to your repo. Free CLI + $19 premium pack.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://cc-commands.thomaspeng.ca">
+<link rel="preconnect" href="https://rsms.me">
+<link rel="stylesheet" href="https://rsms.me/inter/inter.css">
+<style>
+  :root {
+    --bg: #0a0a0a;
+    --fg: #f4f4f4;
+    --dim: #8a8a8a;
+    --accent: #b794ff;
+    --border: #1f1f1f;
+    --code-bg: #111;
+    --code-fg: #d4d4d4;
+    --green: #56d364;
+    --magenta: #d471ff;
+  }
+  @media (prefers-color-scheme: light) {
+    :root {
+      --bg: #ffffff;
+      --fg: #0a0a0a;
+      --dim: #6b6b6b;
+      --accent: #6d28d9;
+      --border: #e8e8e8;
+      --code-bg: #f6f6f6;
+      --code-fg: #1f1f1f;
+      --green: #16a34a;
+      --magenta: #c026d3;
+    }
+  }
+  * { box-sizing: border-box; }
+  html { font-family: 'Inter', system-ui, -apple-system, sans-serif; font-feature-settings: 'cv11', 'ss03'; -webkit-font-smoothing: antialiased; }
+  body { margin: 0; background: var(--bg); color: var(--fg); line-height: 1.55; }
+  main { max-width: 720px; margin: 0 auto; padding: 4rem 1.5rem 6rem; }
+  h1 { font-size: clamp(2rem, 5vw, 3rem); font-weight: 800; letter-spacing: -0.03em; line-height: 1.1; margin: 0 0 1.5rem; text-wrap: balance; }
+  h2 { font-size: 1.25rem; font-weight: 700; letter-spacing: -0.01em; margin: 3.5rem 0 1rem; }
+  p { margin: 0 0 1.25rem; color: var(--fg); }
+  p.lead { font-size: 1.15rem; color: var(--dim); margin-bottom: 2.5rem; }
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid color-mix(in oklab, var(--accent) 30%, transparent); }
+  a:hover { border-bottom-color: var(--accent); }
+  code, pre { font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace; font-size: 0.875rem; }
+  code { background: var(--code-bg); color: var(--code-fg); padding: 0.1em 0.4em; border-radius: 4px; }
+  pre { background: var(--code-bg); color: var(--code-fg); padding: 1.25rem; border-radius: 8px; overflow-x: auto; line-height: 1.55; border: 1px solid var(--border); }
+  pre code { background: transparent; padding: 0; }
+  .terminal { margin: 2rem 0 3rem; }
+  .terminal .prompt { color: var(--dim); }
+  .terminal .check { color: var(--green); }
+  .terminal .premium { color: var(--magenta); }
+  .terminal .dim { color: var(--dim); }
+  .buy-card { border: 1px solid var(--border); border-radius: 12px; padding: 2rem; margin: 2.5rem 0; background: color-mix(in oklab, var(--bg) 90%, var(--accent) 4%); }
+  .buy-card .price { font-size: 2.5rem; font-weight: 800; letter-spacing: -0.03em; margin: 0 0 0.25rem; }
+  .buy-card .price-sub { color: var(--dim); margin: 0 0 1.5rem; font-size: 0.95rem; }
+  .btn { display: inline-block; background: var(--fg); color: var(--bg); padding: 0.875rem 1.75rem; border-radius: 8px; font-weight: 600; border-bottom: none; transition: opacity 0.15s; }
+  .btn:hover { opacity: 0.85; border-bottom: none; }
+  .btn:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  ul { padding-left: 1.25rem; margin: 0 0 1.5rem; }
+  ul li { margin-bottom: 0.5rem; }
+  table { width: 100%; border-collapse: collapse; margin: 0 0 1.5rem; font-size: 0.95rem; }
+  th, td { text-align: left; padding: 0.625rem 0.75rem; border-bottom: 1px solid var(--border); }
+  th { color: var(--dim); font-weight: 600; font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.05em; }
+  td code { font-size: 0.85rem; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 4rem 0; }
+  footer { color: var(--dim); font-size: 0.9rem; }
+  .hero-tag { display: inline-block; font-size: 0.85rem; color: var(--accent); border: 1px solid color-mix(in oklab, var(--accent) 30%, transparent); padding: 0.25rem 0.625rem; border-radius: 999px; margin-bottom: 1.5rem; letter-spacing: 0.02em; }
+</style>
+</head>
+<body>
+<main>
+
+<span class="hero-tag">cc-commands</span>
+<h1>Claude&nbsp;Code slash commands, tailored to your&nbsp;repo.</h1>
+<p class="lead">One CLI run. It scans your stack — framework, package manager, test runner, monorepo shape — and writes <code>.claude/commands/*.md</code> that match. No more copy-pasting other people's commands and editing them by hand.</p>
+
+<pre class="terminal"><code><span class="prompt">$</span> npx cc-commands
+
+Detected stack:
+  pkgmgr      pnpm
+  languages   javascript, typescript
+  frameworks  nextjs
+  tests       vitest
+  flags       typescript, next-router:app
+
+Wrote 7 commands:
+  <span class="check">✓</span> /commit
+  <span class="check">✓</span> /review
+  <span class="check">✓</span> /add-route
+  <span class="check">✓</span> /add-server-action
+  <span class="check">✓</span> /add-api-route
+  <span class="check">✓</span> /add-test
+  <span class="check">✓</span> /find-dead-code
+
++7 premium commands available:
+  <span class="premium">○</span> /add-feature        TDD-first feature add
+  <span class="premium">○</span> /fix-bug            Systematic debugging
+  <span class="premium">○</span> /pr-self-review     Pre-push self-review
+  <span class="premium">○</span> /safe-rename        Cross-codebase TS rename
+  <span class="premium">○</span> /optimize-rerenders Find React re-render hotspots
+  <span class="premium">○</span> /audit-bundle       Find oversized client bundles
+  <span class="premium">○</span> /add-rate-limit     Per-route rate limiting</code></pre>
+
+<h2>How it works</h2>
+<p>The CLI reads <code>package.json</code>, <code>pyproject.toml</code>, <code>Makefile</code>, lockfiles, and your top-level dirs. It detects 7 frameworks, 3 test runners, 4 databases, 4 package managers, monorepo shape, and CI presence. Then it writes commands whose <code>{{testCommand}}</code>, <code>{{buildCommand}}</code>, <code>{{typecheckCommand}}</code> are substituted with the right invocation for your stack.</p>
+<p>No LLM at runtime. No API key. Deterministic. Runs in &lt;100&nbsp;ms.</p>
+
+<h2>Free tier — 12 commands</h2>
+<ul>
+  <li><strong>Universal</strong> — <code>/commit</code>, <code>/review</code>, <code>/add-test</code>, <code>/find-dead-code</code></li>
+  <li><strong>Next.js App Router</strong> — <code>/add-route</code>, <code>/add-server-action</code>, <code>/add-api-route</code></li>
+  <li><strong>FastAPI</strong> — <code>/add-endpoint</code>, <code>/add-pydantic-model</code></li>
+  <li><strong>Django</strong> — <code>/add-view</code>, <code>/add-model</code></li>
+  <li><strong>Monorepo</strong> — <code>/add-package</code></li>
+  <li><strong>CI</strong> — <code>/check-actions-status</code></li>
+</ul>
+
+<div class="buy-card">
+  <p class="price">$19</p>
+  <p class="price-sub">One-time. No subscription. Includes lifetime updates to v1.x.</p>
+  <a class="btn" href="STRIPE_PAYMENT_LINK_TBD">Buy the premium pack →</a>
+</div>
+
+<h2>What's in the premium pack — 8 deeper commands</h2>
+<table>
+<thead><tr><th>Command</th><th>What it does</th></tr></thead>
+<tbody>
+  <tr><td><code>/add-feature</code></td><td>TDD-first feature add — failing test, minimum impl, refactor</td></tr>
+  <tr><td><code>/fix-bug</code></td><td>Systematic debugging — repro, root cause, regression test, no symptom-patching</td></tr>
+  <tr><td><code>/pr-self-review</code></td><td>Senior-reviewer self-review checklist before pushing</td></tr>
+  <tr><td><code>/safe-rename</code></td><td>Cross-codebase TypeScript symbol rename — exports, callers, type refs</td></tr>
+  <tr><td><code>/optimize-rerenders</code></td><td>Find React re-render hotspots — bad memo, unstable refs, context fan-out</td></tr>
+  <tr><td><code>/audit-bundle</code></td><td>Find oversized Next.js client bundles, server modules in client</td></tr>
+  <tr><td><code>/safe-migration</code></td><td>Deploy-safe DB migrations — Prisma, Drizzle, Alembic, Django</td></tr>
+  <tr><td><code>/add-rate-limit</code></td><td>Per-route rate limiting with proper IP/user keys and 429 responses</td></tr>
+</tbody>
+</table>
+
+<p>Each premium command is longer, sharper, and more opinionated than the free tier. They push back on anti-patterns, refuse to suppress errors, enforce real TDD instead of test-after-the-fact.</p>
+
+<h2>After purchase</h2>
+<p>You get an email with a download link. Drop the archive into <code>~/.cc-commands/templates/</code> and re-run <code>npx cc-commands</code>. Premium commands now render automatically — no license key, no env var.</p>
+
+<hr>
+
+<footer>
+  <p>Built by <a href="https://thomaspeng.ca">Thomas Peng</a>. Open source on <a href="https://github.com/thomaspeng/cc-commands">GitHub</a>. The free CLI is MIT-licensed; the premium pack is licensed for personal + commercial use by the buyer's team.</p>
+  <p>Questions: <a href="mailto:thomas@thomaspeng.ca">thomas@thomaspeng.ca</a></p>
+</footer>
+
+</main>
+</body>
+</html>
